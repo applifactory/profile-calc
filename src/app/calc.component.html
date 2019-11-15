@@ -6,29 +6,61 @@
       type="button"
       class="btn btn-primary btn-sm"
       [class.active]="currentProduct == product"
-      (click)="currentProduct = product"
+      (click)="selectProduct(product)"
     >{{product.serial}}</button>
   </div>
 
-  <div *ngIf="currentProduct" class="card">
-    <div class="card-body">
-      <p><strong>{{currentProduct.name}}</strong> {{currentProduct.description}}</p>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Materials</th>
-            <th>Unit</th>
-            <th>Usage</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of currentProduct.items">
-            <td>{{item.materials[0]}}</td>
-            <td>{{item.unit}}</td>
-            <td>{{item.usage}}</td>
-          </tr>
-        </tbody>
-      </table>
+  <div *ngIf="!currentProduct">
+    <h3 class="text-muted">Wybierz produkt</h3>
+  </div>
+
+  <div *ngIf="currentProduct">
+    <h3>
+      {{currentProduct.name}} <small>{{currentProduct.serial}}</small>
+    </h3>
+    <p>
+      Wysokość: <span class="badge badge-light">{{currentProduct.height}}</span>
+      &nbsp;&nbsp;
+      Grubość: <span class="badge badge-light">{{currentProduct.width}}</span>
+      &nbsp;&nbsp;
+      Masa: <span class="badge badge-light">{{currentProduct.weight}}</span>
+    </p>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="input-group mb-5">
+          <input (keyup)="setArea($event.target.value)" [value]="area" type="number" class="form-control form-control-lg" placeholder="Powierzchnia">
+          <div class="input-group-append">
+            <span class="input-group-text" id="basic-addon2">m<sup>2</sup></span>
+          </div>
+        </div>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Materiały</th>
+              <th class="text-center">Jednostka</th>
+              <th class="text-center">Zużycie jdn.</th>
+              <th class="text-center">Zużycie calk.</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of currentProduct.items">
+              <td>
+                <div class="form-group" *ngIf="item.materials?.length > 1">
+                  <select class="form-control form-control-smddd" (change)="item.currentMaterialUsage = $event.target.value">
+                    <option *ngFor="let material of item.materials" [value]="material.usage">{{material.name | censored}}</option>
+                  </select>
+                </div>
+                <span *ngIf="item.materials?.length <= 1">{{item.materials[0].name | censored}}</span>
+              </td>
+              <td class="text-center">{{item.unit}}</td>
+              <td class="text-center">{{item.currentMaterialUsage}}</td>
+              <td class="text-center">{{ (item.currentMaterialUsage * area).toFixed(2) * 1 || '-'}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
