@@ -1,10 +1,13 @@
 import { Component, Input } from '@angular/core';
+import { data } from './data';
 
 @Component({
   selector: 'calc',
   templateUrl: 'calc.component.html',
-  styles: [``]
+  styleUrls: [ './calc.component.scss' ]
 })
-export class CalcComponent  {
-  
+export class CalcComponent {
+  products = data;
+
+  currentProduct = null;
 }
